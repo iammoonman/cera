@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cera</title>
+    <!-- Entire bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.8/lib/draggable.bundle.js"></script>
+    <style>
+        .draggable-source--is-dragging {
+            visibility: hidden;
+        }
+
+        #test {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            width: min-content;
+            gap: 5px;
+            border: 1px solid blue;
+            padding: 5px;
+        }
+
+        .drag {
+            user-select: none;
+            height: 204px;
+            width: 146px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="test">
+    </div>
+    <button onclick="myfunc()">outie</button>
+    <script>
+        const swappable = new Draggable.Swappable(
+            document.getElementById('test'), {
+            draggable: '.drag',
+            mirror: { appendTo: '#test', constrainDimensions: true, },
+        }
+        )
+        const testElement = (prop) => {
+            const i = document.createElement('div')
+            i.classList.add('drag')
+            i.setAttribute('data-cn', prop.cn)
+            i.setAttribute('data-set', prop.set)
+            i.innerHTML = `
+            <img src="${prop.uri}"/>
+            `
+            return i
+        }
+        const t = document.getElementById('test')
+        async function x() {
+            for (let qq = 1; qq < 36; qq++) {
+                const im = await fetchS(qq, 'afr').then((d) => d.url)
+                const q = testElement({ cn: qq, set: 'afr', uri: im })
+                t.appendChild(q)
+            }
+        }
+        x()
+        function myfunc() {
+            swappable.containers.map((d) => {
+                for (let item of d.children) {
+                    console.log(item.getAttribute('data-cn'), item.getAttribute('data-set'))
+                }
+            })
+        }
+        async function fetchS(cn, set) {
+            const resp = await fetch(`https://api.scryfall.com/cards/${set}/${cn}/en?format=image&version=small`)
+                // .then(response => response.json())
+                .then(data => { console.log(data); return data })
+            return resp
+        }
+    </script>
+</body>
+
+</html>
