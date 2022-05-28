@@ -17,26 +17,67 @@
             display: grid;
             grid-template-columns: repeat(11, 1fr);
             width: min-content;
-            gap: 5px;
+            gap: 2px;
             border: 1px solid blue;
             padding: 5px;
+            width: 100%;
+            height: 600px;
+            overflow-y: scroll;
         }
 
         .drag {
             user-select: none;
-            height: 204px;
-            width: 146px;
+            height: 102px;
+            width: 73px;
             border: 1px solid red;
+            position: relative;
+        }
+
+        .drag>img {
+            height: 102px;
+            width: 73px;
+        }
+
+        .drag>button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: white;
+        }
+
+        .drag>button:hover {
+            background-color: black;
+        }
+
+        .bigtext {
+            height: 250px;
+            width: 100%;
+        }
+
+        .main {
+            display: grid;
+            width: 100%;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body>
-    <div id="test">
+    <div class="main">
+        <div id="test">
+        </div>
+        <button onclick="myfunc()">sheet_to_text</button>
+        <br />
+        <textarea class="bigtext" id="bt"></textarea>
+        <input id="def" type="text" placeholder="default set for lonely strings" />
+        <button onclick="newfunc()">text_to_sheet</button>
     </div>
-    <button onclick="myfunc()">outie</button>
     <script>
-        const swappable = new Draggable.Swappable(
+        const sortable = new Draggable.Sortable(
             document.getElementById('test'), {
             draggable: '.drag',
             mirror: { appendTo: '#test', constrainDimensions: true, },
@@ -54,24 +95,59 @@
         }
         const t = document.getElementById('test')
         async function x() {
-            for (let qq = 1; qq < 36; qq++) {
+            for (let qq = 70; qq < 77; qq++) {
                 const im = await fetchS(qq, 'afr').then((d) => d.url)
                 const q = testElement({ cn: qq, set: 'afr', uri: im })
                 t.appendChild(q)
             }
         }
         x()
-        function myfunc() {
-            swappable.containers.map((d) => {
-                for (let item of d.children) {
-                    console.log(item.getAttribute('data-cn'), item.getAttribute('data-set'))
+        async function newfunc() {
+            const el = document.getElementById('bt')
+            try {
+                const le = JSON.parse(el.value)
+                const u = document.getElementById('test')
+                var child = u.lastElementChild
+                while (child) {
+                    u.removeChild(child)
+                    child = u.lastElementChild
                 }
+                le.map(async (d, ick) => {
+                    setTimeout(async () => {
+                        if (typeof d == typeof ["", ""]) {
+                            let im = await fetchS(d[0], d[1]).then((f) => f.url)
+                            let q = testElement({ cn: d[0], set: d[1], uri: im })
+                            u.appendChild(q)
+                        }
+                        if (typeof d == typeof "") {
+                            var ir = document.getElementById('def').value
+                            if (ir == "") {
+                                ir = "lea"
+                            }
+                            let im = await fetchS(d, ir).then((f) => f.url)
+                            let q = testElement({ cn: d, set: ir, uri: im })
+                            u.appendChild(q)
+                        }
+                    }, 175 * ick)
+                })
+            } catch (e) {
+                alert(e);
+            }
+        }
+        function myfunc() {
+            sortable.containers.map((d) => {
+                const el = [];
+                for (let ss = 0; ss < d.children.length; ss++) {
+                    // console.log(item.getAttribute('data-cn'), item.getAttribute('data-set'));
+                    setTimeout(el.push([d.children[ss].getAttribute('data-cn'), d.children[ss].getAttribute('data-set')]), 200 * ss);
+                }
+                document.getElementById('bt').value = JSON.stringify(el);
             })
         }
         async function fetchS(cn, set) {
             const resp = await fetch(`https://api.scryfall.com/cards/${set}/${cn}/en?format=image&version=small`)
                 // .then(response => response.json())
-                .then(data => { console.log(data); return data })
+                .then(data => { return data })
             return resp
         }
     </script>
