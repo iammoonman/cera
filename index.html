@@ -150,6 +150,20 @@
                 .then(data => { return data })
             return resp
         }
+        async function fetchSC(collection) {
+            const newitems = collection.map((d) => {
+                if (typeof d == typeof ["", ""]) {
+                    return { "collector_number": d[0], "set": d[1] }
+                }
+                if (typeof d == typeof "") {
+                    return { "collector_number": d, "set": document.getElementById('def').value }
+                }
+            })
+            console.log({"identifiers": newitems})
+            const resp = await fetch(`https://api.scryfall.com/cards/collection`, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({"identifiers": newitems}) })
+            .then(e => console.log(e))
+            return resp.json()
+        }
     </script>
 </body>
 
