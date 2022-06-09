@@ -5,7 +5,9 @@ import pickle
 with open('token.pickle', 'rb') as f:
     token = pickle.load(f)
 
-bot = discord.Bot()
+intents = discord.Intents.default()
+intents.message_content = True
+bot = discord.Bot(intents=intents)
 
 @bot.event
 async def on_ready():
@@ -18,6 +20,8 @@ async def on_ready():
     print('Starlight invoked')
     bot.load_extension('drafthandler.glintwing')
     print('Glintwing invoked')
+    bot.load_extension('cardgetter.smokespew')
+    print('Smokespew invoked')
     print('Syncing commands...')
     await bot.sync_commands()
     print('Commands synced.')
