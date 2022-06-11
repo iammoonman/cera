@@ -21,19 +21,17 @@
 		"f": {
 			"flags": ["foil"],
 			"options": [
-				{ "struct": {"a": 1}, "freq": 0.9 },
-				{ "struct": {"b": 1}, "freq": 0.1 }
+				{ "struct": {"a": 1}, "freq": 0.9 }, { "struct": {"b": 1}, "freq": 0.1 }
 			],
 			"sheets": {
 				"a": [ ["132", "aer"], ["133", "aer"], ["134", "aer"] ],
-				"b": []
+				"b": [                                                ]
 			}
 		},
 		"dfc": {
 			"flags": ["sequenced"],
 			"options": [
-				{ "struct": {"a": 1}, "freq": 0.9 },
-				{ "struct": {"b": 1}, "freq": 0.1 }
+				{ "struct": {"a": 1}, "freq": 0.9 }, { "struct": {"b": 1}, "freq": 0.1 }
 			],
 			"sheets": {"a": [], "b": []}
 		}
@@ -44,6 +42,7 @@
 		},
 		"sequenced": {
 			"dfc": { "seq": ["a", "b", "a", "a", "b", "b", "a", "a", "a", "b", "b", "b"] }
-		}
+		},
+		"replace_foil": { "count": 1, "slots": {"c": 0.5, "u": 0.25}, "freq": 0.2 }
 	}
 }
